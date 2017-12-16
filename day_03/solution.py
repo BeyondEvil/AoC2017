@@ -45,9 +45,10 @@ def build_matrix(square, sums=None):
                 next_direction = next(directions)
 
         matrix[start] = {'x': x, 'y': y}
-        total_sum = get_sum(x, y, sums)
-        if sums and total_sum > square:
-            return total_sum
+        if sums:
+            total_sum = get_sum(x, y, sums)
+            if total_sum > square:
+                return total_sum
         seen.append(template.format(x, y))
         start += 1
 
