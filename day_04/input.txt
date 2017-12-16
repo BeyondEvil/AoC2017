@@ -1,48 +1,4 @@
-def run_it_a(passwords):
-    rows = passwords.split('\n')
-    print "total number of phrases: ", len(rows)
-    valid_phrases = 0
-    for row in rows:
-        words = row.split(' ')
-        num_words = len(words)
-        words_set = set(words)
-        num_unique = len(words_set)
-        if num_words == num_unique:
-            valid_phrases += 1
-
-    print "Number of valid phrases: ", valid_phrases
-    return valid_phrases
-
-
-def run_it_b(passwords):
-    rows = passwords.split('\n')
-    print "total number of phrases: ", len(rows)
-    valid_phrases = []
-    for row in rows:
-        words = row.split(' ')
-        num_words = len(words)
-        words_set = set(words)
-        num_unique = len(words_set)
-        if num_words == num_unique:
-            valid_phrases.append(row)
-
-    sorted_valid_phrases = []
-    for phrase in valid_phrases:
-        words = phrase.split(' ')
-        len_before = len(words)
-        sorted_words = set()
-        for word in words:
-            sorted_words.add(''.join(sorted(word)))
-        len_after = len(sorted_words)
-        if len_after == len_before:
-            sorted_valid_phrases.append(phrase)
-
-    print "Number of valid phrases: ", len(sorted_valid_phrases)
-    return valid_phrases
-
-
-if __name__ == '__main__':
-    passwords = """nyot babgr babgr kqtu kqtu kzshonp ylyk psqk
+nyot babgr babgr kqtu kqtu kzshonp ylyk psqk
 iix ewj rojvbkk phrij iix zuajnk tadv givslju ewj bda
 isjur jppvano vctnpjp ngwzdq pxqfrk mnxxes zqwgnd giqh
 ojufqke gpd olzirc jfao cjfh rcivvw pqqpudp
@@ -553,8 +509,4 @@ nvifbx jbowbj fnyskt jbowbj xvun xvun
 piyl haajm stwzpp xvjg amjah
 gye efwwwiv kyv zmtcgmi ifwvwew
 dflx gdtb jyoj jyoj dflx aqhycgi xffnn
-inc mpys mzqmcwx vryz ibqrzc pmsy fat rojpxwy rcbqzi gjef"""
-
-    #run_it_a(passwords)
-
-    run_it_b(passwords)
+inc mpys mzqmcwx vryz ibqrzc pmsy fat rojpxwy rcbqzi gjef
