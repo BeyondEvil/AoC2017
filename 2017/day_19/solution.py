@@ -50,8 +50,7 @@ def run_it(seq):
             if next_direction == 'left':
                 y -= 1
 
-    word = ''.join([p for p in path if p.isalpha()])
-    print('Part 1: ', word)
+    print('Part 1: ', ''.join([p for p in path if p.isalpha()]))
     print('Part 2: ', len(path))
 
 
