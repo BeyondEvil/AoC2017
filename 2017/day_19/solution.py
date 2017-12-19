@@ -7,54 +7,40 @@ def read_input():
 
 def run_it(seq):
     grid = seq.splitlines(True)
-    start = grid[0].find('|')
-
-    node_lookup = {(0, start): '|'}
-    for ir, row in enumerate(grid[1:]):
+    node_lookup = {}
+    x = y = None
+    for ir, row in enumerate(grid):
         for ic, column in enumerate(row):
             if column.strip():
-                node_lookup.update({(ir + 1, ic): column})
+                if not any([x, y]):
+                    x = ir
+                    y = ic
+                node_lookup.update({(ir, ic): column})
 
-    seen = set()
-    seen.add((0, start))
+    coords = {(0, 1): 'right', (1, 0): 'down', (0, -1): 'left', (-1, 0): 'up'}
+    seen = list()
     next_direction = 'down'
-    x = 1
-    y = start
-    next_coord = (x, y)
-    letters = ''
-    steps = 1
+    path = []
     while True:
-        seen.add(next_coord)
+        next_coord = (x, y)
+        seen.append(next_coord)
         direction = node_lookup.get(next_coord)
 
         if direction is None:
             break
 
-        if direction.isalpha():
-            letters += direction
-            if next_direction == 'down':
-                x += 1
-            if next_direction == 'up':
-                x -= 1
-            if next_direction == 'right':
-                y += 1
-            if next_direction == 'left':
-                y -= 1
-            next_coord = (x, y)
-
-        elif direction == '+':
-            coords = {(0, 1): 'right', (1, 0): 'down', (0, -1): 'left', (-1, 0): 'up'}
+        path.append(direction)
+        if direction == '+':
             for coord in coords.keys():
                 row = x + coord[0]
                 column = y + coord[1]
                 next_node = node_lookup.get((row, column))
                 if next_node and (row, column) not in seen:
                     next_direction = coords.get(coord)
-                    next_coord = (row, column)
                     x = row
                     y = column
 
-        else:  # intersection
+        else:
             if next_direction == 'down':
                 x += 1
             if next_direction == 'up':
@@ -63,12 +49,10 @@ def run_it(seq):
                 y += 1
             if next_direction == 'left':
                 y -= 1
-            next_coord = (x, y)
 
-        steps += 1
-
-    print('Part 1: ', letters)
-    print('Part 2: ', steps)
+    word = ''.join([p for p in path if p.isalpha()])
+    print('Part 1: ', word)
+    print('Part 2: ', len(path))
 
 
 if __name__ == '__main__':
