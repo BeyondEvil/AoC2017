@@ -1,51 +1,4 @@
-from collections import defaultdict
-import operator as op
-
-operators = {'>': op.gt,
-             '<': op.lt,
-             '>=': op.ge,
-             '<=': op.le,
-             '==': op.eq,
-             '!=': op.ne,
-             'inc': op.iadd,
-             'dec': op.isub}
-
-
-def run_it_a(datainput):
-    rows = datainput.split('\n')
-
-    registry = defaultdict(lambda: 0)
-    for row in rows:
-        register_to_modify, operation, op_value, conditional, conditional_reg, operator, cond_value = row.split(' ')
-        if operators[operator](registry[conditional_reg], int(cond_value)):
-            registry[register_to_modify] = operators[operation](registry[register_to_modify], int(op_value))
-
-    print("largest value: ", max(registry.values()))
-
-
-def run_it_b(datainput):
-    rows = datainput.split('\n')
-
-    largest_held = 0
-    registry = defaultdict(lambda: 0)
-    for row in rows:
-        register_to_modify, operation, op_value, conditional, conditional_reg, operator, cond_value = row.split(' ')
-        if operators[operator](registry[conditional_reg], int(cond_value)):
-            registry[register_to_modify] = operators[operation](registry[register_to_modify], int(op_value))
-        if registry[register_to_modify] >= largest_held:
-            largest_held = registry[register_to_modify]
-
-    print("largest held: ", largest_held)
-
-
-if __name__ == '__main__':
-
-    _input2 = """b inc 5 if a > 1
-a inc 1 if b < 5
-c dec -10 if a >= 1
-c inc -20 if c == 10"""
-
-    _input = """y inc 497 if n <= 3
+y inc 497 if n <= 3
 ig inc -54 if es < 9
 j dec 278 if low < 10
 nm inc -531 if tr == 0
@@ -1044,29 +997,4 @@ s dec -478 if jaq > -4170
 j inc 924 if ipq == -1184
 ntk inc -239 if y == -846
 wby inc -397 if ntk >= -2941
-nm dec 907 if qen == 2233"""
-
-    #run_it_a(_input)
-    #exec('a=0')
-    print(a)
-    exit()
-    run_it_b(_input)
-
-# p = p.replace('inc', '+').replace('dec', '-')
-# instructions = [l for l in p.splitlines() if l]
-# registers = set(i.split()[0] for i in instructions)
-# record = 0
-#
-# for r in registers:
-#     exec(f'{r} = 0')
-#
-# for i in instructions:
-#     r = i.split()[0]
-#     i = f'{r} = {i} else {r}'
-#     exec(i)
-#     if eval(r) > record:
-#         print(f'new record: {eval(r)}')
-#         record = eval(r)
-#
-# values = ({r: eval(r) for r in registers})
-# print(f'solution: {record}')
+nm dec 907 if qen == 2233
