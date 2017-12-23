@@ -7,71 +7,100 @@ def read_input():
 
 
 def parse(pattern):
-    outer = []
-    rows = pattern.split('/')
-    for row in rows:
-        inner = [i for i in row]
-        outer.append(inner)
-    return np.array(outer)
+    if len(pattern) == 5:
+        r = c = 2
+    elif len(pattern) == 11:
+        r = c = 3
+    elif len(pattern) == 19:
+        r = c = 4
+    else:
+        raise
+
+    array = np.zeros((r, c), dtype=int)
+    r = c = 0
+    for char in pattern:
+        if char == '#':
+            array[r, c] = 1
+        elif char == '/':
+            r += 1
+            c = -1
+        c += 1
+
+    return array
 
 
-def find_match(master, rules):
-    print "master in find:\n", master
-    for each in rules:
-        match = each[0]
-        pattern = each[1]
-        index = 0
-        flipped = False
-        while index < 4:
-            if np.array_equal(master, match):
-                return pattern
-            match = np.rot90(match)
-            index += 1
-            if index == 3 and not flipped:
-                match = np.fliplr(match)
-                index = 0
-                flipped = True
+def build_list(rule, enhance, rules):
+    index = 0
+    flipped = False
+    seen = rules.keys()
+    while index < 4:
+        hash_rule = tuple(rule.flatten())
+        if hash_rule not in seen:
+            rules[hash_rule] = enhance
+        rule = np.rot90(rule)
+        index += 1
+        if index == 4 and not flipped:
+            rule = np.fliplr(rule)
+            index = 0
+            flipped = True
 
 
-def run_it(seq):
+def find_match(pattern, rules):
+    for hash_rule, enhance in rules.items():
+        if tuple(pattern.flatten()) == hash_rule:
+            return enhance.copy()
 
-    master_pattern = parse(".#./..#/###")
 
-    print "pattern start:\n", master_pattern
+def transform(array, rules, sizer, stepper):
+    size = len(array)
+    steps = size / sizer
+    new_grid = np.zeros((stepper * steps, stepper * steps))
+    for row in range(steps):
+        for col in range(steps):
+            rule = array[sizer * row:sizer * row + sizer, sizer * col:sizer * col + sizer].copy()
+            enhance = find_match(rule, rules)
+            if enhance is not None:
+                new_grid[stepper * row:stepper * row + stepper, stepper * col:stepper * col + stepper] = enhance.copy()
 
-    size2_rules = []
-    size3_rules = []
-    for rule in seq.split('\n'):
-        match, transform = rule.split(' => ')
-        m = parse(match)
-        t = parse(transform)
+    return new_grid
 
-        if m.size % 2 == 0:
-            size2_rules.append((m, t))
-        else:
-            size3_rules.append((m, t))
 
-    iterations = 1
-    for i in range(iterations):
-        if master_pattern.size % 2 == 0:
-            match = find_match(master_pattern[0:2, 0:2], size2_rules)
-            if match is not None:
-                pass
+def run_it(seq, iterations):
 
-        elif master_pattern.size % 3 == 0:
-            match = find_match(master_pattern[0:3, 0:3], size3_rules)
-            if match is not None:
-                pass
+    master_pattern = ".#./..#/###"
+    art = parse(master_pattern)
+
+    size2_rules = dict()
+    size3_rules = dict()
+    for pair in seq.split('\n'):
+        rule, enhance = pair.split(' => ')
+        a_rule = parse(rule)
+        a_enhance = parse(enhance)
+        if a_rule.size % 2 == 0:
+            build_list(a_rule, a_enhance, size2_rules)
+        elif a_rule.size % 3 == 0:
+            build_list(a_rule, a_enhance, size3_rules)
         else:
             raise
 
-    print "pattern finish:\n", master_pattern
-    print "ons", np.count_nonzero(master_pattern == '#')
+    part_1 = 0
+    for i in range(iterations):
 
-    print('Part 1: ', 0)
-    print('Part 2: ', 0)
+        if i == 5:
+            part_1 = art.sum()
+
+        size = len(art)
+        if size % 2 == 0:
+            art = transform(art, size2_rules, 2, 3)
+        elif size % 3 == 0:
+            art = transform(art, size3_rules, 3, 4)
+        else:
+            raise
+
+    print('Part 1: ', int(part_1))
+    print('Part 2: ', int(art.sum()))
 
 
 if __name__ == '__main__':
 
-    run_it(read_input())  # ,
+    run_it(read_input(), 18)  # 205, 3389823
