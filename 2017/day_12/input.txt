@@ -1,73 +1,4 @@
-
-
-class Program(object):
-
-    def __init__(self, pid):
-        self.pid = pid
-        self.neighbours = []
-
-    def add_neighbour(self, program):
-        self.neighbours.append(program)
-
-    def get_group(self, group=None):
-        if not group:
-            group = []
-
-        for neigh in self.neighbours:
-            if neigh not in group:
-                group.append(neigh)
-                neigh.get_group(group)
-        return group
-
-
-def run_it_a(seq):
-    rows = seq.split('\n')
-
-    programs = []
-    neighbours = {}
-    for row in rows:
-        program, neighs = row.split('<->')
-        program = int(program.strip())
-        programs.append(Program(program))
-        neighbours[program] = neighs.strip()
-
-    for prog, neighs in neighbours.items():
-        neighs = [int(r.strip()) for r in neighs.split(',')]
-        for program in programs:
-            if program.pid == prog:
-                for neighbour in neighs:
-                    for n_program in programs:
-                        if neighbour == n_program.pid:
-                            program.add_neighbour(n_program)
-
-    return programs
-
-
-def run_it_b(seq):
-    programs = run_it_a(seq)
-
-    groups = []
-    num_of_groups = 0
-    for program in programs:
-        if program not in groups:
-            group = program.get_group()
-            groups.extend(group)
-            num_of_groups += 1
-
-    print num_of_groups
-
-
-if __name__ == '__main__':
-
-    _seq = """0 <-> 2
-1 <-> 1
-2 <-> 0, 3, 4
-3 <-> 2, 4
-4 <-> 2, 3, 6
-5 <-> 6
-6 <-> 4, 5"""
-
-    _seq = """0 <-> 795
+0 <-> 795
 1 <-> 156
 2 <-> 715
 3 <-> 1361, 1698
@@ -2066,8 +1997,4 @@ if __name__ == '__main__':
 1996 <-> 1697
 1997 <-> 1413
 1998 <-> 1191
-1999 <-> 807, 1190"""
-
-    print len(run_it_a(_seq)[0].get_group())
-
-    run_it_b(_seq)
+1999 <-> 807, 1190

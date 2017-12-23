@@ -45,8 +45,7 @@ def transform(array, rules, sizer, stepper):
 
 def run_it(seq, iterations):
 
-    master_pattern = ".#./..#/###"
-    art = parse(master_pattern)
+    art = parse(".#./..#/###")
 
     size2_rules = dict()
     size3_rules = dict()
