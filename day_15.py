@@ -27,7 +27,7 @@ def get_value(start, factor, product, condition):
 
 
 def run_it_b(start_a, start_b):
-    iterations= int(5e6)
+    iterations = int(5e6)
     factor_a = 16807
     factor_b = 48271
     product = 2147483647
