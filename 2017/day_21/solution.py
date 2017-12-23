@@ -1,4 +1,5 @@
 import numpy as np
+from math import sqrt
 
 
 def read_input():
@@ -7,42 +8,20 @@ def read_input():
 
 
 def parse(pattern):
-    if len(pattern) == 5:
-        r = c = 2
-    elif len(pattern) == 11:
-        r = c = 3
-    elif len(pattern) == 19:
-        r = c = 4
-    else:
-        raise
-
-    array = np.zeros((r, c), dtype=int)
-    r = c = 0
-    for char in pattern:
-        if char == '#':
-            array[r, c] = 1
-        elif char == '/':
-            r += 1
-            c = -1
-        c += 1
-
-    return array
+    pattern = pattern.replace('/', '')
+    size = int(sqrt(len(pattern)))
+    return np.array([1 if c == '#' else 0 for c in pattern], dtype=int).reshape(size, size)
 
 
 def build_list(rule, enhance, rules):
-    index = 0
-    flipped = False
     seen = rules.keys()
-    while index < 4:
+    for i in range(8):
         hash_rule = tuple(rule.flatten())
         if hash_rule not in seen:
             rules[hash_rule] = enhance
         rule = np.rot90(rule)
-        index += 1
-        if index == 4 and not flipped:
+        if i == 3:
             rule = np.fliplr(rule)
-            index = 0
-            flipped = True
 
 
 def find_match(pattern, rules):
@@ -52,9 +31,8 @@ def find_match(pattern, rules):
 
 
 def transform(array, rules, sizer, stepper):
-    size = len(array)
-    steps = size / sizer
-    new_grid = np.zeros((stepper * steps, stepper * steps))
+    steps = len(array) / sizer
+    new_grid = np.zeros((stepper * steps, stepper * steps), dtype=int)
     for row in range(steps):
         for col in range(steps):
             rule = array[sizer * row:sizer * row + sizer, sizer * col:sizer * col + sizer].copy()
@@ -85,6 +63,7 @@ def run_it(seq, iterations):
 
     part_1 = 0
     for i in range(iterations):
+        print "Iteration: ", i + 1
 
         if i == 5:
             part_1 = art.sum()
