@@ -122,4 +122,4 @@ def run_it2(seq):
 if __name__ == '__main__':
 
     run_it(read_input())  # 5399
-    run_it2(read_input())
+    run_it2(read_input())  # 2511776
