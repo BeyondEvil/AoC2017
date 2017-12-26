@@ -19,8 +19,7 @@ def run_it(steps, states):
     next_state = 'A'
     index = 0
     for step in range(steps):
-        value, direction, next_state = states.get((next_state, tape.get(index, 0)))
-        tape[index] = value
+        tape[index], direction, next_state = states.get((next_state, tape.get(index, 0)))
         index += direction
 
     print('Part 1: ', sum(tape.values()))
@@ -28,4 +27,4 @@ def run_it(steps, states):
 
 if __name__ == '__main__':
 
-    run_it(12399302, real_states)  # 2794,
+    run_it(12399302, real_states)  # 2794
