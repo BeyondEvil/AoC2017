@@ -9,20 +9,15 @@ def run_it(seq):
     """l,w,h 2*l*w + 2*w*h + 2*h*l"""
 
     measurements = []
-    for index, measurement in enumerate(seq.splitlines()):
+    for measurement in seq.splitlines():
         measurements.append(sorted(map(int, measurement.split('x'))))
 
     paper = 0
     ribbon = 0
-    for each in measurements:
-        l = each[0] * each[1]
-        w = each[1] * each[2]
-        h = each[2] * each[0]
-        bow = each[0] * each[1] * each[2]
-        ribbon += 2 * (each[0] + each[1]) + bow
-        extra = min([l, w, h])
-        total = 2 * (l + w + h) + extra
-        paper += total
+    for l, w, h in measurements:
+        area = [l * w, w * h, h * l]
+        paper += 2 * sum(area) + min(area)
+        ribbon += 2 * (l + w) + (l * w * h)
 
     print('Part 1: ', paper)
     print('Part 2: ', ribbon)
