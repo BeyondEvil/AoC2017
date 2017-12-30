@@ -1,77 +1,37 @@
+from collections import defaultdict
+
 
 def read_input():
     with open('input.txt', 'r') as f:
         return f.read().strip()
 
 
-class Component(object):
-
-    class Port(object):
-        def __init__(self, strength):
-            self.strength = strength
-            self.free = True
-
-    def __init__(self, port_a, port_b):
-        self.port_a = self.Port(port_a)
-        self.port_b = self.Port(port_b)
-        self.used = False
-        self.total_strength = self.total_strength()
-
-    def __repr__(self):
-        return "port a: {0.port_a.strength}\nport b: {0.port_b.strength}\n".format(self)
-
-    def total_strength(self):
-        return self.port_a.strength + self.port_b.strength
-
-    def has_free_ports(self):
-        return self.port_a.free or self.port_b.free
-
-    def get_free_port(self, strength):
-        if self.port_a.strength == strength and self.port_a.free:
-            return self.port_a
-        if self.port_b.strength == strength and self.port_b.free:
-            return self.port_b
-        return None
+def gen_bridges(components, bridge):
+    cur_port = bridge[-1][1]
+    for next_port in components[cur_port]:
+        component = (cur_port, next_port)
+        if not (component in bridge or component[::-1] in bridge):
+            new = bridge + [component]
+            yield new
+            for each in gen_bridges(components, new):
+                yield each
 
 
 def run_it(seq):
+    components = defaultdict(set)
+    for comp in seq.strip().splitlines():
+        p1, p2 = [int(p) for p in comp.split('/')]
+        components[p1].add(p2)
+        components[p2].add(p1)
 
-    components = list()
-    for each in seq.split('\n'):
-        p_a, p_b = each.split('/')
-        components.append(Component(int(p_a), int(p_b)))
+    bridge_meta = []
+    for bridge in gen_bridges(components, [(0, 0)]):
+        bridge_meta.append((len(bridge), sum(a+b for a, b in bridge)))
 
-    match = 0
-    used = []
-    components.sort(key=lambda x: x.total_strength, reverse=True)
-    index = 0
-    while index < 300:
-        for component in components:
-            if component not in used:
-                port = component.get_free_port(match)
-                if port:
-                    port.free = False
-                    if component.port_a.strength != match:
-                        match = component.port_a.strength
-                    elif component.port_b.strength != match:
-                        match = component.port_b.strength
-                    else:
-                        assert False
-                    component.used = True
-                    used.append(component)
-        index += 1
-
-    sum = 0
-    for each in used:
-        sum += each.total_strength
-
-    print sum
-
-
-    print('Part 1: ', 0)
-    print('Part 2: ', 0)
+    print('Part 1: ', sorted(bridge_meta, key=lambda x: x[1])[-1][1])
+    print('Part 2: ', sorted(bridge_meta)[-1][1])
 
 
 if __name__ == '__main__':
 
-    run_it(read_input())  # ,
+    run_it(read_input())  # 1695, 1673
