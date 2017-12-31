@@ -7,19 +7,18 @@ def read_input():
 
 
 def run_it(seq):
+    coord = {'^': (0, 1),
+             'v': (0, -1),
+             '>': (1, 0),
+             '<': (-1, 0)}
 
     houses = defaultdict(int)
     x, y = (0, 0)
     for direction in seq:
         houses[(x, y)] = True
-        if direction == '>':
-            x += 1
-        elif direction == '^':
-            y += 1
-        elif direction == '<':
-            x -= 1
-        else:
-            y -= 1
+        dx, dy = coord[direction]
+        x += dx
+        y += dy
 
     print('Part 1: ', sum(houses.values()))
 
@@ -31,22 +30,11 @@ def run_it(seq):
     coords = {True: [(0, 0), santa_houses], False: [(0, 0), robo_houses]}
     santa = True
     for direction in seq:
-        if direction == '>':
-            x, y = coords[santa][0]
-            x += 1
-            coords[santa][0] = (x, y)
-        elif direction == '^':
-            x, y = coords[santa][0]
-            y += 1
-            coords[santa][0] = (x, y)
-        elif direction == '<':
-            x, y = coords[santa][0]
-            x -= 1
-            coords[santa][0] = (x, y)
-        else:
-            x, y = coords[santa][0]
-            y -= 1
-            coords[santa][0] = (x, y)
+        dx, dy = coord[direction]
+        x, y = coords[santa][0]
+        x += dx
+        y += dy
+        coords[santa][0] = (x, y)
         coords[santa][1][(x, y)] = True
         santa = not santa
 
