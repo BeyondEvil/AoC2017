@@ -9,46 +9,21 @@ def read_input():
 
 def run_it(seq):
 
-    grid = defaultdict(int)
+    grid = defaultdict(bool)
+    grid2 = defaultdict(int)
     for instruction in seq.splitlines():
         sx, sy, fx, fy = map(int, re.findall('\d+', instruction))
-        if instruction.startswith('turn on'):
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    grid[(x, y)] = 1
-
-        elif instruction.startswith('turn off'):
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    grid[(x, y)] = 0
-
-        else:  # toggle
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    grid[(x, y)] = 0 if grid[(x, y)] else 1
+        for x in range(sx, fx + 1):
+            for y in range(sy, fy + 1):
+                if instruction.startswith('turn'):
+                    grid[(x, y)] = 'on' in instruction
+                    grid2[(x, y)] += 1 if 'on' in instruction else (-1 if grid2[(x, y)] else 0)
+                else:
+                    grid[(x, y)] = not grid[(x, y)]
+                    grid2[(x, y)] += 2
 
     print('Part 1: ', sum(grid.values()))
-
-    grid = defaultdict(int)
-    for instruction in seq.splitlines():
-        sx, sy, fx, fy = map(int, re.findall('\d+', instruction))
-        if instruction.startswith('turn on'):
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    grid[(x, y)] += 1
-
-        elif instruction.startswith('turn off'):
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    if grid[(x, y)]:
-                        grid[(x, y)] -= 1
-
-        else:  # toggle
-            for x in range(sx, fx + 1):
-                for y in range(sy, fy + 1):
-                    grid[(x, y)] += 2
-
-    print('Part 2: ', sum(grid.values()))
+    print('Part 2: ', sum(grid2.values()))
 
 
 if __name__ == '__main__':
