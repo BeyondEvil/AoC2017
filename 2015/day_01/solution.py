@@ -8,13 +8,11 @@ def read_input():
 def run_it(seq):
 
     floor = 0
-    position = 0
-    entered = False
+    position = False
     for index, each in enumerate(seq):
         floor += 1 if each == '(' else -1
-        if floor == -1 and not entered:
+        if floor == -1 and not position:
             position = index + 1
-            entered = True
 
     print('Part 1: ', floor)
     print('Part 2: ', position)
