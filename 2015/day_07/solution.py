@@ -56,6 +56,8 @@ def run_it(seq):
             a = get(wires, a)
             b = get(wires, b)
 
+            # overriding wire b with wire a by basically
+            # skipping to write anything new to it
             if out == 'b':
                 continue
 
