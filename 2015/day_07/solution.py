@@ -1,5 +1,5 @@
 import re
-import operator as op
+import operator
 from collections import defaultdict
 
 
@@ -12,52 +12,69 @@ def get(parts, v):
     try:
         return int(v)
     except ValueError:
-        return int(parts[v])
+        v = parts[v]
+        if v is not None:
+            return v
 
 
 def run_it(seq):
-    operation = {'AND': op.and_,
-                 'LSHIFT': op.lshift,
-                 'RSHIFT': op.rshift,
-                 'OR': op.or_}
+    operation = {'AND': operator.and_,
+                 'LSHIFT': operator.lshift,
+                 'RSHIFT': operator.rshift,
+                 'OR': operator.or_}
 
-    wires = defaultdict(int)
+    std_gates = ['AND', 'OR', 'RSHIFT', 'LSHIFT']
+
+    pattern = '(?:(?:(?:(\S+) )?(.*)) )?(\S+) -> (\S+)'
+
+    wires = defaultdict(lambda: None)
     while not wires['a']:
         for instruction in seq.splitlines():
-            cmd = re.split(' | -> ', instruction)
-            cmd.remove('->')
-            if len(cmd) == 2:  # 123 -> x
-                v, w = cmd
-                v = get(wires, v)
-                if v:
-                    wires[w] = v
-            elif len(cmd) == 3:  # NOT x -> h
-                _, v, w = cmd
-                if v:
-                    v = get(wires, v)
-                    wires[w] = v
-            elif len(cmd) == 4:  # x AND y -> d
-                v1, o, v2, w = cmd
-                v1 = get(wires, v1)
-                v2 = get(wires, v2)
-                if v1 and v2:
-                    wires[w] = operation[o](v1, v2)
+            a, op, b, out = re.findall(pattern, instruction)[0]
+            a = get(wires, a)
+            b = get(wires, b)
+
+            if op == 'NOT':
+                if b is not None:
+                    wires[out] = ~b
+            elif op == '':  # assign
+                if b is not None:
+                    wires[out] = b
+            elif op in std_gates:
+                if a is not None and b is not None:
+                    wires[out] = operation[op](a, b)
             else:
                 assert False
 
-    print('Part 1: ', wires['a'])
-    print('Part 2: ', 0)
+    part_one = wires['a']
+
+    wires = defaultdict(lambda: None)  # lazy reset
+    wires['b'] = part_one
+    while not wires['a']:
+        for instruction in seq.splitlines():
+            a, op, b, out = re.findall(pattern, instruction)[0]
+            a = get(wires, a)
+            b = get(wires, b)
+
+            if out == 'b':
+                continue
+
+            if op == 'NOT':
+                if b is not None:
+                    wires[out] = ~b
+            elif op == '':  # assign
+                if b is not None:
+                    wires[out] = b
+            elif op in std_gates:
+                if a is not None and b is not None:
+                    wires[out] = operation[op](a, b)
+            else:
+                assert False
+
+    print('Part 1: ', part_one)
+    print('Part 2: ', wires['a'])
 
 
 if __name__ == '__main__':
 
-    run_it("""x AND y -> d
-x OR y -> e
-x LSHIFT 2 -> f
-y RSHIFT 2 -> g
-NOT x -> h
-NOT y -> i
-123 -> x
-456 -> y""")  #
-
-    #run_it(read_input())
+    run_it(read_input())  # 3176, 14710
