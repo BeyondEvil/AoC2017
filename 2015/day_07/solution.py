@@ -25,7 +25,7 @@ def run_it(seq):
 
     std_gates = ['AND', 'OR', 'RSHIFT', 'LSHIFT']
 
-    pattern = '(?:(?:(?:(\S+) )?(.*)) )?(\S+) -> (\S+)'
+    pattern = r'(?P<a>\w+)??\s*(?P<op>\w+)??\s*(?P<b>\w+)\s*->\s*(?P<out>\w+)'
 
     wires = defaultdict(lambda: None)
     while not wires['a']:
