@@ -24,13 +24,11 @@ def run_it(seq):
     memorized = 0
     encoderized = 0
     for literal in seq.splitlines():
-        code_size = len(literal)
-
         in_mem = in_memory(literal)
-        memorized += code_size - len(in_mem)
+        memorized += len(literal) - len(in_mem)
 
         enc = encoded(literal)
-        encoderized += len(enc) - code_size
+        encoderized += len(enc) - len(literal)
 
     print('Part 1: ', memorized)
     print('Part 2: ', encoderized)
