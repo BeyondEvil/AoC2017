@@ -61,4 +61,4 @@ def run_it(seq):
 
 if __name__ == '__main__':
 
-    run_it(read_input())  # 207,
+    run_it(read_input())  # 207, 804
